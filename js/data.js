@@ -6,7 +6,7 @@ window.TCW_DATA = {
     "city": "Nogent-sur-Marne",
     "phone": "01 48 73 95 95",
     "phoneHref": "+33148739595",
-    "email": "skn.dev.test@gmail.comm",
+    "email": "capitini@hotmail.fr",
     "address1": "147 TER B boulevard de Strasbourg",
     "address2": "94130 Nogent-sur-Marne",
     "hours": [
@@ -15,11 +15,10 @@ window.TCW_DATA = {
     ]
   },
   "emailjs": {
-    "publicKey": "r3D3EPckF2A9QRdzl",
+    "publicKey": "",
     "serviceId": "",
     "templateId": "",
-    "templateIdClient": ""   // l'accusé de réception → vers le client
-}
+    "templateIdClient": ""
   },
   "vehicles": [
     {

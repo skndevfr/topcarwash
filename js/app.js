@@ -10,6 +10,7 @@
   var state = {
     vehicle: "citadine",
     washType: "interieur",
+    civility: "M.",
     addons: {},
     date: "",
     time: "",
@@ -114,8 +115,31 @@
   /* ---------- étape 5 : coordonnées ---------- */
   var emailEl = $("#email");
   var phoneEl = $("#phone");
+  var firstEl = $("#firstname");
+  var lastEl = $("#lastname");
   emailEl.addEventListener("input", refresh);
   phoneEl.addEventListener("input", refresh);
+  firstEl.addEventListener("input", refresh);
+  lastEl.addEventListener("input", refresh);
+
+  $("#civility").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-civility]");
+    if (!btn) return;
+    state.civility = btn.getAttribute("data-civility");
+    $$("#civility [data-civility]").forEach(function (b) {
+      var on = b === btn;
+      b.classList.toggle("is-selected", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
+  });
+
+  function fullName() {
+    return (firstEl.value || "").trim() + " " + (lastEl.value || "").trim();
+  }
+
+  function greeting() {
+    return "Bonjour " + state.civility + " " + (lastEl.value || "").trim();
+  }
 
   $("#prefs").addEventListener("click", function (e) {
     var btn = e.target.closest("[data-pref]");
@@ -164,6 +188,10 @@
   var cfg = DATA.emailjs || {};
   var emailjsReady = !!(cfg.publicKey && cfg.serviceId && cfg.templateId);
 
+  if (emailjsReady && window.emailjs) {
+    window.emailjs.init({ publicKey: cfg.publicKey });
+  }
+
   noteEl.textContent = emailjsReady
     ? "Votre demande est envoyée directement à Top Car Wash. Réponse par email ou SMS."
     : "En confirmant, votre application mail s'ouvre avec la demande pré-remplie à envoyer à " + DATA.business.email + ".";
@@ -171,6 +199,8 @@
   function isValid() {
     return /.+@.+\..+/.test(emailEl.value) &&
       (phoneEl.value || "").trim().length >= 6 &&
+      (firstEl.value || "").trim().length >= 2 &&
+      (lastEl.value || "").trim().length >= 2 &&
       !!state.date && !!state.time && !!state.washType;
   }
 
@@ -194,7 +224,7 @@
   }
 
   /* ---------- envoi ---------- */
-  function buildMessage() {
+  function buildDetails() {
     var r = calc();
     var chosen = DATA.addons.filter(function (a) { return state.addons[a.id]; });
     var vehName = (DATA.vehicles.filter(function (v) { return v.id === state.vehicle; })[0] || {}).name || "—";
@@ -212,14 +242,19 @@
       lines.push("Code promo : " + state.promoApplied + " (-" + money(r.discount) + ")");
     }
     lines.push("Total : " + money(r.total));
+    return lines.join("\n");
+  }
+
+  function buildMessage() {
     var contact = [
+      "Client : " + state.civility + " " + fullName(),
       "Email : " + emailEl.value,
       "Téléphone : " + phoneEl.value,
       "Préférence de contact : " + (state.contactPref === "sms" ? "SMS" : "Email"),
       "Consentement communications marketing : " + (state.marketing ? "Oui" : "Non")
     ];
     return "Bonjour,\n\nJe souhaite prendre rendez-vous pour un lavage :\n\n" +
-      lines.join("\n") + "\n\nMes coordonnées :\n" + contact.join("\n") +
+      buildDetails() + "\n\nMes coordonnées :\n" + contact.join("\n") +
       "\n\nMerci de me confirmer le créneau ou de me proposer un autre horaire.\n";
   }
 
@@ -228,6 +263,7 @@
     var chosen = DATA.addons.filter(function (a) { return state.addons[a.id]; });
     var vehName = (DATA.vehicles.filter(function (v) { return v.id === state.vehicle; })[0] || {}).name || "—";
     var rows = [
+      ["Client", state.civility + " " + fullName()],
       ["Véhicule", vehName],
       ["Type de lavage", r.wash.name],
       ["Options", chosen.length ? chosen.map(function (a) { return a.name; }).join(", ") : "Aucune"],
@@ -261,16 +297,33 @@
     if (emailjsReady && window.emailjs) {
       state.sending = true;
       refresh();
-      window.emailjs.send(cfg.serviceId, cfg.templateId, {
+      var params = {
         to_email: DATA.business.email,
         reply_to: emailEl.value,
-        from_name: emailEl.value,
+        client_email: emailEl.value,
+        from_name: fullName(),
+        client_name: fullName(),
+        civility: state.civility,
+        first_name: (firstEl.value || "").trim(),
+        last_name: (lastEl.value || "").trim(),
+        greeting: greeting(),
         phone: phoneEl.value,
+        vehicle: (DATA.vehicles.filter(function (v) { return v.id === state.vehicle; })[0] || {}).name || "",
+        wash: calc().wash.name,
+        booking_date: frDate(),
+        booking_time: state.time,
+        total: money(calc().total),
         contact_pref: state.contactPref === "sms" ? "SMS" : "Email",
         marketing: state.marketing ? "Oui" : "Non",
         subject: subject,
-        message: body
-      }, { publicKey: cfg.publicKey }).then(function () {
+        message: body,
+        details: buildDetails()
+      };
+      window.emailjs.send(cfg.serviceId, cfg.templateId, params).then(function () {
+        // Accusé de réception au client — facultatif, ne bloque jamais la confirmation.
+        if (cfg.templateIdClient) {
+          window.emailjs.send(cfg.serviceId, cfg.templateIdClient, params).catch(function () {});
+        }
         state.sending = false;
         refresh();
         showConfirmation();
@@ -295,6 +348,13 @@
     state.vehicle = "citadine"; state.washType = "interieur";
     dateEl.value = ""; timeEl.value = ""; promoEl.value = "";
     emailEl.value = ""; phoneEl.value = "";
+    firstEl.value = ""; lastEl.value = "";
+    state.civility = "M.";
+    $$("#civility [data-civility]").forEach(function (b) {
+      var on = b.getAttribute("data-civility") === "M.";
+      b.classList.toggle("is-selected", on);
+      b.setAttribute("aria-pressed", String(on));
+    });
     promoMsg.hidden = true;
     marketingEl.classList.remove("is-checked");
     marketingEl.setAttribute("aria-pressed", "false");

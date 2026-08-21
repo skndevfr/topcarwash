@@ -73,11 +73,45 @@ Pour un envoi direct : créer un compte [EmailJS](https://www.emailjs.com/) et r
 "emailjs": {
   "publicKey": "votre_public_key",
   "serviceId": "service_xxxxxxx",
-  "templateId": "template_xxxxxxx"
+  "templateId": "template_xxxxxxx",        // demande envoyée au garage
+  "templateIdClient": "template_yyyyyyy"  // accusé de réception au client (optionnel)
 }
 ```
 
-Variables du gabarit EmailJS : `to_email`, `reply_to`, `from_name`, `phone`, `contact_pref`, `marketing`, `subject`, `message`.
+Variables du gabarit EmailJS : `greeting`, `civility`, `first_name`, `last_name`, `client_name`, `client_email`, `reply_to`, `phone`, `vehicle`, `wash`, `booking_date`, `booking_time`, `total`, `contact_pref`, `marketing`, `subject`, `message`, `details`, `to_email`.
+
+### Les deux gabarits
+
+**Gabarit 1 — la demande (vers vous)**
+
+- To Email : votre adresse · Reply To : `{{reply_to}}` · Subject : `{{subject}}`
+- Contenu : `{{message}}`
+
+**Gabarit 2 — la confirmation (vers le client)**
+
+- To Email : `{{client_email}}`
+- Objet : `Votre demande de rendez-vous — Top Car Wash`
+- Contenu :
+
+```
+{{greeting}},
+
+Nous avons bien reçu votre demande de rendez-vous :
+
+{{details}}
+
+Nous revenons vers vous par {{contact_pref}} pour confirmer ce créneau,
+ou vous proposer un autre horaire.
+
+Top Car Wash — 147 TER B boulevard de Strasbourg, 94130 Nogent-sur-Marne
+01 48 73 95 95
+```
+
+`{{greeting}}` donne par exemple « Bonjour M. Dupont ».
+
+Laissez `templateIdClient` vide pour n'envoyer que la demande. Si la confirmation client échoue, l'écran de confirmation s'affiche quand même — le visiteur n'est jamais bloqué.
+
+**Quota :** l'offre gratuite EmailJS est de 200 envois/mois. Avec les deux emails, cela fait **100 rendez-vous par mois**. Vider `templateIdClient` double cette capacité.
 
 Un champ anti-robot invisible (honeypot) est déjà en place.
 
