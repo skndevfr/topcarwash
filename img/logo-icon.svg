@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="50 -4 580 272" width="580" height="272">
+<title>Top Car Wash</title>
+<g fill="#0047AB" transform="translate(-25,0)">
+<circle cx="235" cy="120" r="76"></circle><circle cx="340" cy="82" r="80"></circle><circle cx="450" cy="82" r="76"></circle>
+<circle cx="548" cy="122" r="68"></circle><circle cx="165" cy="178" r="58"></circle><circle cx="132" cy="136" r="42"></circle>
+<circle cx="590" cy="178" r="54"></circle><circle cx="278" cy="168" r="62"></circle><circle cx="392" cy="150" r="64"></circle>
+<circle cx="498" cy="150" r="62"></circle><circle cx="210" cy="218" r="52"></circle><circle cx="320" cy="232" r="50"></circle>
+<circle cx="432" cy="230" r="52"></circle><circle cx="375" cy="238" r="48"></circle><circle cx="538" cy="218" r="48"></circle>
+<circle cx="114" cy="84" r="16"></circle><circle cx="150" cy="50" r="11"></circle><circle cx="602" cy="78" r="15"></circle>
+<circle cx="634" cy="118" r="9"></circle><circle cx="92" cy="190" r="13"></circle><circle cx="624" cy="210" r="11"></circle>
+</g>
+<ellipse cx="340" cy="254" rx="150" ry="9" fill="#000000"></ellipse>
+<g fill="#000000" transform="translate(4.84,7) scale(0.98)">
+<path d="M152,206 L152,180 C152,168 158,159 170,156 L254,148 L260,143 C268,132 282,120 300,112 C309,108 317,105 326,104 L400,101 C415,101 427,105 437,114 L474,132 L498,146 C511,154 520,164 525,175 C530,186 532,196 532,206 L503.5,206 A38,38 0 0 0 428.5,206 L261.5,206 A38,38 0 0 0 186.5,206 Z"></path>
+<path d="M264,141 L246,146 C242,147 241,151 243,154 L249,156 L266,152 Z"></path>
+<circle cx="224" cy="212" r="38"></circle>
+<circle cx="466" cy="212" r="38"></circle>
+</g>
+</svg>
